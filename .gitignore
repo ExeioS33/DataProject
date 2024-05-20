@@ -1,0 +1,5 @@
+financial_data_lake/
+my_env/
+env_project/
+financial_package/__pycache__ 
+financial_package/stock_historical_data.py/
