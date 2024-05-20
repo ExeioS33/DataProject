@@ -5,12 +5,6 @@ import pandas as pd
 import random
 from typing import List
 from typing import Tuple
-
-import os
-import yfinance as yf
-from datetime import datetime
-import pandas as pd
-from typing import List
 import logging
 
 # Configuration du logging
