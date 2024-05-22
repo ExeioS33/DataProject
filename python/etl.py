@@ -1,114 +1,94 @@
 from datetime import datetime
+import traceback
 import pandas as pd
 import numpy as np
 import sys
 
+class StockDataETL:
+    def __init__(self, df):
+        self.df = df.astype(str).tail(1)
+        self.type_error = []
+        self.df_invalid = pd.DataFrame()
 
-# tableau pour la récupération des erreurs
-type_error = []
+    def check_legal_characters(self):
+        try:
+            pd.to_datetime(self.df['Date'])
+            print("'Date': OK")
+        except ValueError:
+            print("'Date': PAS OK")
+            self.type_error.append("'Date' format")
 
-def check_legal_characters(df):
-    # Vérification des caractères légaux pour la colonne 'Date'
-    global type_error
-    try:
-        pd.to_datetime(df['Date'])
-        print("'Date': OK")
-    except ValueError:
-        print("'Date': PAS OK")
-        type_error += [f"'Date' format"]
+        for column in self.df.columns:
+            if column not in ('Date', 'date_modification'):
+                if self.df[column].str.match(r'^-?\d*\.?\d*$').all():
+                    print(f"'{column}': OK")
+                else:
+                    print(f"'{column}': PAS OK")
+                    self.type_error.append(f"'{column}' format")
 
-    # Vérification des caractères légaux pour toutes les autres colonnes
-    for column in df.columns:
-        if column not in ('Date','date_modification'):
-            if df[column].str.match(r'^-?\d*\.?\d*$').all():
-                print(f"'{column}': OK")
-            else:
-                print(f"'{column}': PAS OK")
-                type_error += [f"'{column}' format"]
-# Utilisation de la fonction pour vérifier le dataframe
+    def recast_columns(self):
+        self.df['Date'] = pd.to_datetime(self.df['Date'])
 
+        for column in self.df.columns:
+            if column != 'Date':
+                if column in ['Open', 'High', 'Low', 'Close']:
+                    self.df[column] = pd.to_numeric(self.df[column])
+                elif column == 'Volume':
+                    self.df[column] = self.df[column].astype(int)
+                elif column in ['Dividends', 'Stock_Splits']:
+                    self.df[column] = self.df[column].astype(float)
+                elif column == 'date_modification':
+                    self.df[column] = pd.to_datetime(self.df[column])
 
-     
-     
-def recast_columns(df):
-    # Recast de la colonne 'Date'
-    df['Date'] = pd.to_datetime(df['Date'])
+    def filter_aberrant_values(self):
+        price_columns = ['Open', 'High', 'Low', 'Close']
+        invalid_price_rows = self.df[(self.df[price_columns] < 0).any(axis=1)]
+        self.df_invalid = pd.concat([self.df_invalid, invalid_price_rows])
+        self.df = self.df[~self.df.index.isin(invalid_price_rows.index)]
 
-    # Recast des autres colonnes
-    for column in df.columns:
-        if column != 'Date':
-            if column in ['Open', 'High', 'Low', 'Close']:
-                df[column] = pd.to_numeric(df[column])
-            elif column == 'Volume':
-                df[column] = df[column].astype(int)
-            elif column in ['Dividends', 'Stock Splits']:
-                df[column] = df[column].astype(float)
-            elif column == 'date_modification':
-                df[column] = pd.to_datetime(df[column])
-    return df
-# Utilisation de la fonction pour recaster le dataframe
+        invalid_date_rows = self.df[self.df['Date'] < '1987-12-31']
+        self.df_invalid = pd.concat([self.df_invalid, invalid_date_rows])
+        self.df = self.df[~self.df.index.isin(invalid_date_rows.index)]
 
-print('casting ok')
+        current_date = np.datetime64(datetime.now().date())
+        invalid_future_date_rows = self.df[self.df['Date'] > current_date]
+        self.df_invalid = pd.concat([self.df_invalid, invalid_future_date_rows])
+        self.df = self.df[~self.df.index.isin(invalid_future_date_rows.index)]
 
-def filter_aberrant_values(df):
-    # Initialiser un dataframe pour stocker les lignes non valides
-    global type_error
-    df_invalid = pd.DataFrame(columns=df.columns)
+        if invalid_date_rows.shape[0] > 0 or invalid_future_date_rows.shape[0] > 0:
+            self.type_error.append('Date val')
 
-    # Filtrer les valeurs négatives dans les colonnes de prix
-    price_columns = ['Open', 'High', 'Low', 'Close']
-    invalid_price_rows = df[(df[price_columns] < 0).any(axis=1)]
-    df_invalid = pd.concat([df_invalid, invalid_price_rows])
-    df = df[~df.index.isin(invalid_price_rows.index)]
+        if invalid_price_rows.shape[0] > 0:
+            self.type_error.append('Num val')
 
-    # Filtrer les dates avant la création du CAC 40 (date de début : 31 décembre 1987)
-    invalid_date_rows = df[df['Date'] < '1987-12-31']
-    df_invalid = pd.concat([df_invalid, invalid_date_rows])
-    df = df[~df.index.isin(invalid_date_rows.index)]
+    def save_invalid_data(self):
+        print(self.df_invalid)
+        if not self.df_invalid.empty:
+            self.df_invalid['type_error'] = ', '.join(self.type_error)
+            self.df_invalid.to_excel('unvalid_data.xlsx', index=False)
 
-    # Filtrer les dates supérieures à la date actuelle
-    current_date = np.datetime64(datetime.now().date())
-    invalid_future_date_rows = df[df['Date'] > current_date]
-    df_invalid = pd.concat([df_invalid, invalid_future_date_rows])
-    df = df[~df.index.isin(invalid_future_date_rows.index)]
-
-    # Autres filtres spécifiques aux données financières peuvent être ajoutés ici
-    if invalid_date_rows.shape[0] > 0 or invalid_future_date_rows.shape[0] > 0:
-        type_error += ['Date val']
-
-    if invalid_price_rows.shape[0] > 0:
-        type_error += ['Num val']
+    def process(self):
+        self.check_legal_characters()
         
-    return df, df_invalid
+        if self.type_error:
+            self.df['type_error'] = ', '.join(self.type_error)
+            self.df.to_excel('unvalid_data.xlsx', index=False)
+            sys.exit()
 
-# Appliquer les filtres
+        self.recast_columns()
+        self.filter_aberrant_values()
+        self.save_invalid_data()
+        
+        if not self.df_invalid.empty:
+            return self.df
+        else: 
+            print('error aberrant_values')
 
+if __name__ == "__main__":
+    # Extraction du CSV et création du DataFrame
+    df = pd.read_csv('ACA.PA_Historical_Data.csv')
 
-# Importation temporaire du flux
-df = pd.read_csv('ACA.PA_Historical_Data.csv')
-
-# Selection de la ligne la plus récente 
-df = df.iloc[-1].to_frame().T
-
-# Cast en string pour éviter tous problèmes de formats
-df = df.astype(str)
-
-
-
-check_legal_characters(df)
-
-
-if len(type_error) != 0:
-     errors = ', '.join(type_error)
-     df_unvalid = df
-     df_unvalid['type_error'] = errors
-     sys.exit()
-
-df = recast_columns(df)
-
-df, df_invalid = filter_aberrant_values(df)
-if df_invalid.shape[0] == 0:
-     errors = ', '.join(type_error)
-     df_unvalid = df_invalid
-     df_unvalid['type_error'] = errors
-     sys.exit()
+    # Création de l'instance de la classe et traitement des données
+    etl = StockDataETL(df)
+    processed_df = etl.process()
+    print(processed_df)  # Utilisez le DataFrame traité comme nécessaire
