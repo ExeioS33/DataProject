@@ -2,7 +2,7 @@
 rem S'assurer que la version standard de Python est installée
 
 set "PYTHON_ENV=C:\Users\EXEIO\AppData\Local\Programs\Python\Python311"
-set "PROJECT_WORKSPACE=C:\path\to\project"
+set "PROJECT_WORKSPACE=C:\_project\M1_project\data_project-end-to-end-solo-"
 set "VENV_PATH=%PROJECT_WORKSPACE%\env_project"
 
 rem Créer l'environnement virtuel si ce n'est pas déjà fait

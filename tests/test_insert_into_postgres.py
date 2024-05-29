@@ -2,7 +2,7 @@ import unittest
 import os
 import pandas as pd
 from unittest.mock import patch, MagicMock
-from financial_package.insert_into_postgres import PostgresInserter
+from financial_package.postgres_utils import PostgresInserter
 
 class TestPostgresInserter(unittest.TestCase):
     """
