@@ -25,6 +25,6 @@ EMAIL_CONFIG = {
     "smtp_server": "smtp.office365.com",
     "smtp_port": 587,
     "smtp_user": "sandampitiaandria@gmail.com",
-    "smtp_password": "Xwds4FuE4CtZ"
+    "smtp_password": "your_password"
 }
 
