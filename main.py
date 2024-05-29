@@ -1,5 +1,5 @@
 from financial_package.get_historical_data import CAC40HistoricalData
-from financial_package.insert_into_postgres import PostgresInserter
+from financial_package.postgres_utils import PostgresInserter
 from config import DB_CONFIG, TICKERS, SAVE_DIRECTORY
 import os
 

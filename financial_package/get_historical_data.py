@@ -5,6 +5,12 @@ import pandas as pd
 import random
 from typing import List
 from typing import Tuple
+
+import os
+import yfinance as yf
+from datetime import datetime
+import pandas as pd
+from typing import List
 import logging
 
 # Configuration du logging
@@ -51,7 +57,7 @@ class CAC40HistoricalData:
         try:
             ticker = yf.Ticker(ticker_symbol)
             data = ticker.history(period="max")
-            data.index = data.index.tz_localize(None)
+            data = self.clean_columns(data)
             logging.info(f"Successfully fetched data for {ticker_symbol}.")
             return data
         except Exception as e:
@@ -69,20 +75,30 @@ class CAC40HistoricalData:
         Raises:
             Exception: If there is an error saving the data to CSV.
         """
-        try:
-            # Rename the column "Stock Splits" to "Stock_Splits"
-            data = data.rename(columns={"Stock Splits": "Stock_Splits"})
-            
-            filename = f"{ticker_symbol}_Historical_Data.csv"
+        try:     
+            filename = f"{self.ticker_symbol}_Historical_Data.csv"
             filepath = os.path.join(self.save_path, filename)
+            data = self.clean_columns(data)
+            data.to_csv(filepath)
+            logging.info(f"Saved historical data for {self.ticker_symbol} in {filepath}")
+        except Exception as e:
+            logging.error(f"Error saving data for {self.ticker_symbol} to CSV: {e}")
+            raise
+
+    def clean_columns(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Clean and restructure columns to correct format
+        """
+        try :
+            data.index = data.index.tz_localize(None)
+            data.reset_index(inplace=True)  # Reset the index to make 'Date' a column
+            data = data.rename(columns={"Stock Splits": "Stock_Splits"})
             current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             data['date_modification'] = current_date
             data['date_modification'] = pd.to_datetime(data['date_modification'])
-            data.to_csv(filepath)
-            logging.info(f"Saved historical data for {ticker_symbol} in {filepath}")
+            return data
         except Exception as e:
-            logging.error(f"Error saving data for {ticker_symbol} to CSV: {e}")
-            raise
+            logging.error(f"Failed to format columns for {self.ticker_symbol}: {e}")
 
     def process_and_save_all(self) -> None:
         """
