@@ -1,6 +1,6 @@
 @echo off
 REM Ask the user for the virtual environment path
-set "PROJECT_VENV_PATH=C:\_project\M1_project\data_project-end-to-end-solo-\my_env"
+set "PROJECT_VENV_PATH=C:\Users\Benja\projet_sup_de_vinci\DataProject\env_project"
 
 REM Activate the virtual environment
 call "%PROJECT_VENV_PATH%\Scripts\activate"

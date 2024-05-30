@@ -57,7 +57,8 @@ class CAC40HistoricalData:
         try:
             ticker = yf.Ticker(ticker_symbol)
             data = ticker.history(period="max")
-            data = self.clean_columns(data)
+            data.index = data.index.tz_localize(None)
+            data = self.clean_columns(data, ticker_symbol)
             logging.info(f"Successfully fetched data for {ticker_symbol}.")
             return data
         except Exception as e:
@@ -76,21 +77,20 @@ class CAC40HistoricalData:
             Exception: If there is an error saving the data to CSV.
         """
         try:     
-            filename = f"{self.ticker_symbol}_Historical_Data.csv"
+            filename = f"{ticker_symbol}_Historical_Data.csv"
             filepath = os.path.join(self.save_path, filename)
-            data = self.clean_columns(data)
-            data.to_csv(filepath)
-            logging.info(f"Saved historical data for {self.ticker_symbol} in {filepath}")
+            data = self.clean_columns(data, ticker_symbol)
+            data.to_csv(filepath, index=False)
+            logging.info(f"Saved historical data for {ticker_symbol} in {filepath}")
         except Exception as e:
-            logging.error(f"Error saving data for {self.ticker_symbol} to CSV: {e}")
+            logging.error(f"Error saving data for {ticker_symbol} to CSV: {e}")
             raise
 
-    def clean_columns(self, data: pd.DataFrame) -> pd.DataFrame:
+    def clean_columns(self, data: pd.DataFrame, ticker_symbol : str) -> pd.DataFrame:
         """
         Clean and restructure columns to correct format
         """
         try :
-            data.index = data.index.tz_localize(None)
             data.reset_index(inplace=True)  # Reset the index to make 'Date' a column
             data = data.rename(columns={"Stock Splits": "Stock_Splits"})
             current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -98,7 +98,7 @@ class CAC40HistoricalData:
             data['date_modification'] = pd.to_datetime(data['date_modification'])
             return data
         except Exception as e:
-            logging.error(f"Failed to format columns for {self.ticker_symbol}: {e}")
+            logging.error(f"Failed to format columns for {ticker_symbol}: {e}")
 
     def process_and_save_all(self) -> None:
         """
@@ -146,3 +146,5 @@ class StockHistoricalData(CAC40HistoricalData):
         full_path = os.path.join(self.save_path, filename)
         data.to_excel(full_path)
         print(f"Saved historical data for {ticker} at {full_path}.")
+
+

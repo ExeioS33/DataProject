@@ -8,7 +8,7 @@ Instructions pour configurer PostgreSQL et exécuter le script SQL :
    - Remplacez `C:\Program Files\PostgreSQL\13\bin` par le chemin où PostgreSQL est installé, si différent.
    - Remplacez `C:\path\to\your\script\setup_database.sql` par le chemin réel où se trouve votre script SQL.
 
-4. Exécutez le script batch `setup_postgresql.bat` :
+4. Exécutez le script batch `setup_postgresql.bat` en tant qu'administrateur :
    - Ouvrez l'invite de commande (cmd) ou le terminal (PowerShell) sur votre ordinateur.
    - Accédez au répertoire où se trouve le script batch.
    - Exécutez le script en tapant `setup_postgresql.bat`.

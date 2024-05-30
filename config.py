@@ -1,7 +1,7 @@
 # config.py
 
 DB_CONFIG = {
-    "dbname": "datawarehouse_test",
+    "dbname": "datawarehouse",
     "user": "postgres",
     "password": "root",
     "host": "localhost",
@@ -20,11 +20,11 @@ SAVE_DIRECTORY = "./financial_data_lake"
 SAVE_EXCEL = "./intraday_directory"
 
 EMAIL_CONFIG = {
-    "sender_email": "sandampitiaandria@gmail.com",
-    "receiver_email": "razafimahatratra.andriamandimbisoambelomasina@supdevinci-edu.fr",
+    "sender_email": "your_mail@outlook.com",
+    "receiver_email": "receiver_mail@outlook.com",
     "smtp_server": "smtp.office365.com",
     "smtp_port": 587,
-    "smtp_user": "sandampitiaandria@gmail.com",
-    "smtp_password": "Xwds4FuE4CtZ"
+    "smtp_user": "your_mail@outlook.com",
+    "smtp_password": "your_password"
 }
 

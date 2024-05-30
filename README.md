@@ -168,7 +168,14 @@ Le dictionnaire `TICKERS` contient toutes les actions du CAC40 à récupèrer.
 
 `SAVE_DIRECTORY` et `SAVE_EXCEL` sont les dossiers où seront stockés les données brutes des actions du CAC40 (datalake) et le dossier où l'on créera le fichier excel par la suite respectivement.
 
-`EMAIL_CONFIG` ontient les paramètres nécessaires pour l'envoi d'e-mails via un serveur SMTP. Ces paramètres sont particulièrement utiles pour l'envoi de notifications ou d'alertes automatisées.
+`EMAIL_CONFIG` contient les paramètres nécessaires pour l'envoi d'e-mails via un serveur SMTP. Ces paramètres sont particulièrement utiles pour l'envoi de notifications ou d'alertes automatisées. 
+
+**IMPORTANT** : créer un compte outlook si jamais vous voulez effectuer l'alerting avec un compte personnel, et définissez ensuite le dans `config.py`.
+
+Lors de la reception du mail, regarder dans les spams au cas où.
+
+Si vous rencontrez une erreur lors de l'envoi, vérifiez les paramètres de votre compte et lisez la documentation.
+
 
    - sender_email: L'adresse e-mail qui apparaîtra comme expéditeur.
    - receiver_email: L'adresse e-mail du destinataire.

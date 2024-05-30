@@ -3,7 +3,7 @@ SETLOCAL
 
 :: Variables
 SET "PGSQL_PATH=C:\Program Files\PostgreSQL\16\bin"
-SET "SQL_SCRIPT_PATH=C:\_project\M1_project\data_project-end-to-end-solo-\setup_postgresql.sql"
+SET "SQL_SCRIPT_PATH=C:\Users\Benja\projet_sup_de_vinci\DataProject\setup_postgresql.sql"
 SET "DB_USER=postgres"
 SET "DB_NAME=datawarehouse"
 SET "DB_PASSWORD=root"
