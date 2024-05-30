@@ -16,7 +16,7 @@ Ce projet permet de récupérer des données historiques des actions du CAC 40 �
 2. **Configuration de la Base de Données PostgreSQL**
 
     Lire [setup.md](https://github.com/ExeioS33/DataProject/blob/master/setup.md)
-²&&   
+
 3. **Configuration de l'Environnement de Développement**
 
     Un script batch est fourni pour automatiser le processus de configuration de l'environnement de développement. Voici les étapes pour l'utiliser :
@@ -123,7 +123,7 @@ Cet partie fournit des instructions pour configurer et planifier l'exécution de
 - Un environnement virtuel Python (préalablement crée)
 
 ## Fichiers
-- `run_daily_update.bat` : Configure les tâches planifiées pour exécuter `daily_update.py` toutes les 10 minutes entre 9h00 et 17h00 les jours ouvrables.
+- `run_daily_update.bat` : Configure les tâches planifiées pour exécuter `daily_update.py` toutes les 3 minutes entre 9h00 et 17h00 les jours ouvrables.
 - `run_alerting.bat` : Configure une tâche planifiée pour exécuter `alerting.py` à 17h00 chaque jour ouvrable.
 
 
@@ -170,7 +170,7 @@ Le dictionnaire `TICKERS` contient toutes les actions du CAC40 à récupèrer.
 
 `EMAIL_CONFIG` contient les paramètres nécessaires pour l'envoi d'e-mails via un serveur SMTP. Ces paramètres sont particulièrement utiles pour l'envoi de notifications ou d'alertes automatisées. 
 
-**IMPORTANT** : créer un compte outlook si jamais vous voulez effectuer l'alerting avec un compte personnel, et définissez ensuite le dans `config.py`.
+**IMPORTANT** : créer un compte outlook si jamais vous voulez effectuer l'alerting avec un compte personnel, et définissez  le ensuite dans `config.py`.
 
 Lors de la reception du mail, regarder dans les spams au cas où.
 
@@ -194,7 +194,7 @@ Si vous rencontrez une erreur lors de l'envoi, vérifiez les paramètres de votr
     - Sous l'onglet "Déclencheurs", ajoutez un nouveau déclencheur :
         - Commencez la tâche "Quotidiennement".
         - Réglez l'heure de début à 09:00.
-        - Cochez "Répéter la tâche toutes les" et choisissez "10 minutes", pour une durée de "1 jour".
+        - Cochez "Répéter la tâche toutes les" et choisissez "3 minutes", pour une durée de "1 jour".
     - Sous l'onglet "Actions", ajoutez une nouvelle action :
         - Action: "Démarrer un programme".
         - Programme/script: Naviguez et sélectionnez run_daily_update.bat.
