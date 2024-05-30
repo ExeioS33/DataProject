@@ -15,7 +15,7 @@ Ce projet permet de récupérer des données historiques des actions du CAC 40 �
 
 2. **Configuration de la Base de Données PostgreSQL**
 
-    Lire [setup.md](https://github.com/ExeioS33/DataProject/blob/master/setup.md)
+    Lire [setup.md](https://github.com/ExeioS33/DataProject/blob/main/setup.md)
 
 3. **Configuration de l'Environnement de Développement**
 
