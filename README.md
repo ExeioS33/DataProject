@@ -218,3 +218,10 @@ Répétez les étapes ci-dessus pour alerting.py, en ajustant le déclencheur po
 - Utilisation de variables d'environnements.
 
 - Dockerisation du projet pour éviter de tout setup en local et pour la portabilité.
+
+### Futures améliorations
+- Streamlit pour l'UI
+
+- Dockerisation du projet
+
+- incorporation du retrieve en temps réel des données (à réfléchir comment)
